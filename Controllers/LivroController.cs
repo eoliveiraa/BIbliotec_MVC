@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Bibliotec.Contexts;
 using Bibliotec.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,10 +20,19 @@ namespace Bibliotec.Controllers
             _logger = logger;
         }
 
-
+        Context context = new Context();
 
         public IActionResult Index()
         {
+            ViewBag.Admin = HttpContext.Session.GetString("Admin")!;
+
+            List<Livro> listaLivros = context.Livro.ToList();
+
+            var livrosReservados = context.LivroReserva.ToDictionary(livro => livro.LivroID, Livror => Livror.DtReserva);
+
+            ViewBag.Livros = listaLivros;
+            ViewBag.LivrosComReserva = livrosReservados;
+
             return View();
         }
 
