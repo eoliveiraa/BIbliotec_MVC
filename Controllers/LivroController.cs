@@ -31,10 +31,43 @@ namespace Bibliotec.Controllers
             var livrosReservados = context.LivroReserva.ToDictionary(livro => livro.LivroID, Livror => Livror.DtReserva);
 
             ViewBag.Livros = listaLivros;
+
             ViewBag.LivrosComReserva = livrosReservados;
 
             return View();
         }
+        // metodo que retorna a tela de cadastro
+
+        [Route("Cadastro")]
+        public IActionResult Cadastro()
+        {
+
+            ViewBag.Admin = HttpContext.Session.GetString("Admin")!;
+
+            ViewBag.Categorias = context.Categoria.ToList();
+
+            return View();
+        }
+
+        [Route("Cadastrar")]
+        public IActionResult Cadastrar(IFormCollection form)
+        {
+            Livro novoLivro = new Livro();
+
+            novoLivro.Nome = form["Nome"].ToString();
+            novoLivro.Nome = form["Descricao"].ToString();
+            novoLivro.Nome = form["Editora"].ToString();
+            novoLivro.Nome = form["Escritor"].ToString();
+            novoLivro.Nome = form["Idioma"].ToString();
+
+            context.Livro.Add(novoLivro);
+            context.SaveChanges();
+
+        }
+
+
+
+
 
         // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         // public IActionResult Error()
