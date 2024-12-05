@@ -166,16 +166,70 @@ namespace Bibliotec.Controllers
 
                 livroAtualizado.Imagem = imagem.FileName;
 
+                //1- Pegar as categorias selecionadas do usuario 
+                var categoriasSelecionadas = form[" Categoria"].ToList();
+
+                //2- Pegar as categorias novas do livro
+                var categoriasAtuais = context.LivroCategoria.Where(livro => livro.LivroID == id).ToList();
+
+                //3- Removeremos as categorias antigas
+                foreach (var categoria in categoriasAtuais)
+                {
+                    if (categoriasSelecionadas.Contains(categoria.CategoriaID.ToString()))
+                    {
+                        context.LivroCategoria.Remove(categoria);
+                    }
+                }
+
+                //4- Adicionar as novas categorias
+                foreach (var categoria in categoriasSelecionadas)
+                {
+                    if (!categoriasAtuais.Any(c => c.CategoriaID.ToString() == categoria))
+                    {
+                        context.LivroCategoria.Add(new LivroCategoria { LivroID = id, CategoriaID = int.Parse(categoria) });
+                    }
+                }
+
+
             }
 
+            context.SaveChanges();
+            return LocalRedirect("/Livro");
+
         }
+    
+    
+    }
+    
+    [Route("Excluir")]
+
+        public IActionResult Excluir(int id)
+        {
+
+            Livro livroEncontrado = context.Livro.First(livro => livro.LivroID == id);
+
+            var categoriaDoLivro = context.LivroCategoria.Where(livro => livro.LivroID == id).ToList();
+
+            foreach (var categoria in categoriaDoLivro)
+            {
+                context.LivroCategoria.Remove(categoria);
+            }
+
+            context.Livro.Remove(livroEncontrado);
+            context.SaveChanges();
+
+            return LocalRedirect("/Livro");
+        }
+    
+
+
     }
 
+    
 
-
-    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    // public IActionResult Error()
-    // {
-    //     return View("Error!");
-    // }
-}
+        // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        // public IActionResult Error()
+        // {
+        //     return View("Error!");
+        // }
+    
