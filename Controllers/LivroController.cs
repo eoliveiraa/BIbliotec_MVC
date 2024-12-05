@@ -51,6 +51,7 @@ namespace Bibliotec.Controllers
 
         [Route("Cadastrar")]
         public IActionResult Cadastrar(IFormCollection form)
+
         {
             Livro novoLivro = new Livro();
 
@@ -66,7 +67,7 @@ namespace Bibliotec.Controllers
 
                 var pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/Livros");
 
-                if (Directory.Exists(pasta))
+                if (!Directory.Exists(pasta))
                 {
                     Directory.CreateDirectory(pasta);
                 }
@@ -80,7 +81,8 @@ namespace Bibliotec.Controllers
 
                 novoLivro.Imagem = arquivo.FileName;
 
-            } else
+            }
+            else
             {
                 novoLivro.Imagem = "padrao.png";
             }
@@ -110,12 +112,70 @@ namespace Bibliotec.Controllers
 
         }
 
+        [Route("Editar/(id)")]
+
+        public IActionResult Editar(int id)
+        {
+
+            ViewBag.Admin = HttpContext.Session.GetString("Admin")!;
+
+            Livro livroEncontrado = context.Livro.FirstOrDefault(livro => livro.LivroID == id)!;
+            var categoriasDoLivroEncontrado = context.LivroCategoria.Where(identificadorLivro =>
+            identificadorLivro.LivroID == id).Select(livro => livro.Categoria).ToList();
+
+            ViewBag.Livro = livroEncontrado;
+            ViewBag.Categoria = categoriasDoLivroEncontrado;
+
+            ViewBag.CategoriasDoSistema = context.Categoria.ToList();
+
+            return View();
+        }
+
+        [Route("Atualizar/id")]
+
+        public IActionResult Atualizar(IFormCollection form, int id, IFormFile imagem)
+        {
+            Livro livroAtualizado = context.Livro.FirstOrDefault(livro => livro.LivroID == id)!;
+
+            livroAtualizado.Nome = form["Nome"];
+            livroAtualizado.Escritor = form["Escritor"];
+            livroAtualizado.Editora = form["Editora"];
+            livroAtualizado.Idioma = form["Idioma"];
+            livroAtualizado.Descricao = form["Descricao"];
+
+            if (imagem.Length > 0)
+            {
+                var caminhoImagem = Path.Combine("wwwroot/images/Livros", imagem.FileName);
+
+                if (!string.IsNullOrEmpty(livroAtualizado.Imagem))
+                {
+                    var caminhoImagemAntiga = Path.Combine("wwwroot/images/Livros", livroAtualizado.Imagem);
 
 
-        // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        // public IActionResult Error()
-        // {
-        //     return View("Error!");
-        // }
+                    if (System.IO.File.Exists(caminhoImagemAntiga))
+                    {
+                        System.IO.File.Delete(caminhoImagemAntiga);
+                    }
+                }
+
+                using (var stream = new FileStream(caminhoImagem, FileMode.Create))
+                {
+                    imagem.CopyTo(stream);
+
+                }
+
+                livroAtualizado.Imagem = imagem.FileName;
+
+            }
+
+        }
     }
+
+
+
+    // [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    // public IActionResult Error()
+    // {
+    //     return View("Error!");
+    // }
 }

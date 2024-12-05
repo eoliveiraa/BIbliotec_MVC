@@ -33,6 +33,14 @@
       "PackagePath": "staticwebassets\\images\\ListLivro-icon.png"
     },
     {
+      "Id": "C:\\Users\\54891245808\\Desktop\\BibliotecMVC\\Bibliotec\\wwwroot\\images\\Livros\\coração.png",
+      "PackagePath": "staticwebassets\\images\\Livros\\coração.png"
+    },
+    {
+      "Id": "C:\\Users\\54891245808\\Desktop\\BibliotecMVC\\Bibliotec\\wwwroot\\images\\Livros\\linkedin.png",
+      "PackagePath": "staticwebassets\\images\\Livros\\linkedin.png"
+    },
+    {
       "Id": "C:\\Users\\54891245808\\Desktop\\BibliotecMVC\\Bibliotec\\wwwroot\\images\\UserPlus-icon.svg",
       "PackagePath": "staticwebassets\\images\\UserPlus-icon.svg"
     },
